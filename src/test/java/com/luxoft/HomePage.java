@@ -34,6 +34,40 @@ public class HomePage {
         loginLink.click();
     }
 
+    /**
+     * Открыть PDF-файл каталога курсов. Откроется в новой вкладке,
+     * которая будет неактивна в драйвере
+     */
+    void openCataloguePDF() {
+        findLinkWithText("Каталог").click();
+        findLinkWithText("Скачать каталог").click();
+        switchTab();
+    }
+
+    /**
+     * Переключиться на не текущую вкладку браузера :)
+     */
+    void switchTab() {
+        Set<String> tabs = driver.getWindowHandles();
+        String currentTab = driver.getWindowHandle();
+        for (String tab : tabs) {
+            if (tab.equals(currentTab)) {
+                continue;
+            }
+            driver.switchTo().window(tab);
+            break;
+        }
+    }
+
+    /**
+     * Получить тип содержимого плагина на текущей вкладке.
+     * @return Тип содержимого.
+     */
+    String getPluginContents() {
+        return driver.findElement(By.xpath("//embed"))
+                .getAttribute("type");
+    }
+
     WebElement findLinkWithText(String text) {
         String xpath = "//a[(@href or @onclick) and contains(text(), '"+ text + "')]";
         return driver.findElement(By.xpath(xpath));

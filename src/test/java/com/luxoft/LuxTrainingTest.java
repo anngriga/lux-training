@@ -3,6 +3,7 @@ package com.luxoft;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 
@@ -51,7 +52,7 @@ public class LuxTrainingTest {
 
     @ParameterizedTest
     @CsvFileSource(resources = "/linktexts.csv", numLinesToSkip = 1, delimiter = '|')
-    void testSomething(String url, String linkText) {
+    void testLinkColors(String url, String linkText) {
 
         setUpObject.getDriver().navigate().to(url);
         HomePage homePage = new HomePage(setUpObject.getDriver());
@@ -71,9 +72,24 @@ public class LuxTrainingTest {
 
     }
 
+    @Test
+    void testCatalogue() {
+        HomePage homePage = new HomePage(setUpObject.getDriver());
+        homePage.openCataloguePDF();
+        Assertions.assertEquals(
+                "application/pdf",
+                homePage.getPluginContents(),
+                "Содержимое плагина не в формате PDF!"
+        );
+    }
+
     @AfterAll
     static void tearDown() {
-        setUpObject.getDriver().close();
+        WebDriver driver = setUpObject.getDriver();
+        for (String tab : driver.getWindowHandles()) {
+            driver.switchTo().window(tab);
+            driver.close();
+        }
     }
 
 }
