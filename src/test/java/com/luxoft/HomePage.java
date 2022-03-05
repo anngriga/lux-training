@@ -3,6 +3,7 @@ package com.luxoft;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
@@ -12,22 +13,47 @@ import java.util.Set;
 
 public class HomePage {
 
+    private final WebDriver driver;
+
     @FindBy(xpath = "//div[@class='header__control _nav']/*[local-name() = 'svg'][1]")
-    WebElement loginMenu;
+    private WebElement loginMenu;
 
     @FindBy(className = "two-links")
-    WebElement loginLink;
+    private WebElement loginLink;
 
     @FindBy(xpath = "//ul[@class='navigation__list']")
-    WebElement mainMenu;
+    private WebElement mainMenu;
 
     public HomePage(WebDriver driver) {
+        this.driver = driver;
         PageFactory.initElements(driver, this);
     }
 
     void openLoginForm() {
         loginMenu.click();
         loginLink.click();
+    }
+
+    WebElement findLinkWithText(String text) {
+        String xpath = "//a[(@href or @onclick) and contains(text(), '"+ text + "')]";
+        return driver.findElement(By.xpath(xpath));
+    }
+
+    /**
+     * Найти ссылку с заданным текстом и кликнуть по ней.
+     * @param text Текст для поиска
+     */
+    void clickOnLinkWithText(String text) {
+        findLinkWithText(text).click();
+    }
+
+    String getElementColor(WebElement elem) {
+        return elem.getCssValue("color");
+    }
+
+    void pointOnLink(WebElement elem) {
+        Actions actions = new Actions(driver);
+        actions.moveToElement(elem).build().perform();
     }
 
     /**
