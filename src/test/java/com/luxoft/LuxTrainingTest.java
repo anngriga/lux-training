@@ -3,6 +3,7 @@ package com.luxoft;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -30,9 +31,17 @@ public class LuxTrainingTest {
         setUpObject.clearState();
     }
 
+    private HomePage makeHomePage() {
+        return new HomePage(
+                setUpObject.getDriver(),
+                setUpObject.getWait(),
+                setUpObject.getJavascriptExecutor()
+        );
+    }
+
     @Test
     void testLogIn() {
-        HomePage homePage = new HomePage(setUpObject.getDriver());
+        HomePage homePage = makeHomePage();
         homePage.openLoginForm();
         LoginForm loginForm = new LoginForm(setUpObject.getDriver());
         Assertions.assertTrue(loginForm.allInputsAreVisible());
@@ -41,7 +50,7 @@ public class LuxTrainingTest {
     @ParameterizedTest
     @CsvFileSource(resources = "/links.csv", numLinesToSkip = 1, delimiter = '|')
     void testMainMenuLinks(String first, String second, String third) {
-        HomePage homePage = new HomePage(setUpObject.getDriver());
+        HomePage homePage = makeHomePage();
         Set<String> expectedLinkTexts = Set.of(first, second, third);
         Assertions.assertEquals(
                 expectedLinkTexts,
@@ -55,7 +64,7 @@ public class LuxTrainingTest {
     void testLinkColors(String url, String linkText) {
 
         setUpObject.getDriver().navigate().to(url);
-        HomePage homePage = new HomePage(setUpObject.getDriver());
+        HomePage homePage = makeHomePage();
         WebElement link = homePage.findLinkWithText(linkText);
         Assertions.assertNotEquals(
                 "rgba(242, 111, 33, 1)",
@@ -74,12 +83,26 @@ public class LuxTrainingTest {
 
     @Test
     void testCatalogue() {
-        HomePage homePage = new HomePage(setUpObject.getDriver());
+        HomePage homePage = makeHomePage();
         homePage.openCataloguePDF();
         Assertions.assertEquals(
                 "application/pdf",
                 homePage.getPluginContents(),
                 "Содержимое плагина не в формате PDF!"
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"SQA-050", "SQA-004"})
+    void testCatalogueEnrollLinks(String courseName) {
+        HomePage homePage = makeHomePage();
+        homePage.openCataloguePage();
+        String courseUrl = homePage.findCourseLink(courseName);
+        homePage.openURLInNewTab(courseUrl);
+        Assertions.assertEquals(
+                2,
+                homePage.findCountOfVisibleEnrollButtons(),
+                "Неверное количество кнопок записи на курс!"
         );
     }
 

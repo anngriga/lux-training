@@ -1,15 +1,9 @@
 package com.luxoft;
 
 import lombok.Data;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
@@ -41,6 +35,12 @@ public class SetUp {
     }
 
     void clearState() {
+        while (driver.getWindowHandles().size() > 1) {
+            driver.close();
+        }
+        driver.switchTo().window(
+                driver.getWindowHandles().iterator().next()
+        );
         driver.navigate().to(startUrlString);
     }
 

@@ -1,11 +1,11 @@
 package com.luxoft;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +14,8 @@ import java.util.Set;
 public class HomePage {
 
     private final WebDriver driver;
+    private final WebDriverWait wait;
+    private final JavascriptExecutor executor;
 
     @FindBy(xpath = "//div[@class='header__control _nav']/*[local-name() = 'svg'][1]")
     private WebElement loginMenu;
@@ -24,8 +26,16 @@ public class HomePage {
     @FindBy(xpath = "//ul[@class='navigation__list']")
     private WebElement mainMenu;
 
-    public HomePage(WebDriver driver) {
+    @FindBy(xpath = "//input[@name='q']")
+    private WebElement searchInput;
+
+    @FindBy(xpath = "//div[@class='title-search-result']")
+    private WebElement searchResults;
+
+    public HomePage(WebDriver driver, WebDriverWait wait, JavascriptExecutor executor) {
         this.driver = driver;
+        this.wait = wait;
+        this.executor = executor;
         PageFactory.initElements(driver, this);
     }
 
@@ -35,11 +45,61 @@ public class HomePage {
     }
 
     /**
+     * Открыть страницу Каталога курсов
+     */
+    void openCataloguePage() {
+        findLinkWithText("Каталог").click();
+    }
+
+    /**
+     * Найти ссылку на курс по заданному имени курса
+     * @param name Имя курса для поиска
+     * @return URL найденного курса
+     */
+    String findCourseLink(String name) {
+        searchInput.sendKeys(name);
+        WebElement courseLink = wait.until(ExpectedConditions.visibilityOf(searchResults))
+                .findElement(By.xpath("//div[@class='title-search-result']//a[@href]"));
+        return courseLink.getAttribute("href");
+    }
+
+    /**
+     * Открыть ссылку в новой вкладке и перейти в эту вкладку.
+     * @param url Адрес ссылки, которую нужно открыть
+     */
+    void openURLInNewTab(String url) {
+        // window.open(url, '_blank').focus();
+        String js = "window.open('" + url + "', '_blank').focus();";
+        executor.executeScript(js);
+        switchTab();
+    }
+
+    /**
+     * Найти количество видимых кнопок с текстом "Записаться на курс"
+     * @return Количество отображаемых кнопок
+     */
+    int findCountOfVisibleEnrollButtons() {
+
+        List<WebElement> buttons = driver.findElements(
+                By.xpath("//div[not (@style)]/span[text()='Записаться на курс']")
+        );
+
+        int visibleCount = 0;
+        for (WebElement btn : buttons) {
+            if (btn.isDisplayed()) {
+                visibleCount++;
+            }
+        }
+        return visibleCount;
+
+    }
+
+    /**
      * Открыть PDF-файл каталога курсов. Откроется в новой вкладке,
      * которая будет неактивна в драйвере
      */
     void openCataloguePDF() {
-        findLinkWithText("Каталог").click();
+        openCataloguePage();
         findLinkWithText("Скачать каталог").click();
         switchTab();
     }
