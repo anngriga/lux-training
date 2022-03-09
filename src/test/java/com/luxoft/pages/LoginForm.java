@@ -1,11 +1,11 @@
-package com.luxoft;
+package com.luxoft.pages;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class LoginForm {
+public class LoginForm extends BasePage {
 
     @FindBy(id = "lb01")
     WebElement loginInput;
@@ -20,10 +20,11 @@ public class LoginForm {
     WebElement rememberMeCheckbox;
 
     public LoginForm(WebDriver driver) {
+        super(driver, null, null);
         PageFactory.initElements(driver, this);
     }
 
-    boolean allInputsAreVisible() {
+    public boolean allInputsAreVisible() {
         return loginInput.isDisplayed() && passwordInput.isDisplayed() &&
                 logInButton.isDisplayed() && rememberMeCheckbox.isDisplayed();
     }

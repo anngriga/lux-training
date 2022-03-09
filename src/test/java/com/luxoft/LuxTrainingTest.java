@@ -1,5 +1,9 @@
 package com.luxoft;
 
+import com.luxoft.pages.CataloguePage;
+import com.luxoft.pages.CoursePage;
+import com.luxoft.pages.HomePage;
+import com.luxoft.pages.LoginForm;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
@@ -42,8 +46,7 @@ public class LuxTrainingTest {
     @Test
     void testLogIn() {
         HomePage homePage = makeHomePage();
-        homePage.openLoginForm();
-        LoginForm loginForm = new LoginForm(setUpObject.getDriver());
+        LoginForm loginForm = homePage.openLoginForm();
         Assertions.assertTrue(loginForm.allInputsAreVisible());
     }
 
@@ -84,7 +87,8 @@ public class LuxTrainingTest {
     @Test
     void testCatalogue() {
         HomePage homePage = makeHomePage();
-        homePage.openCataloguePDF();
+        CataloguePage cataloguePage = homePage.openCataloguePage();
+        cataloguePage.openCataloguePDF();
         Assertions.assertEquals(
                 "application/pdf",
                 homePage.getPluginContents(),
@@ -96,12 +100,12 @@ public class LuxTrainingTest {
     @ValueSource(strings = {"SQA-050", "SQA-004"})
     void testCatalogueEnrollLinks(String courseName) {
         HomePage homePage = makeHomePage();
-        homePage.openCataloguePage();
-        String courseUrl = homePage.findCourseLink(courseName);
-        homePage.openURLInNewTab(courseUrl);
+        CataloguePage cataloguePage = homePage.openCataloguePage();
+        String courseUrl = cataloguePage.findCourseLink(courseName);
+        CoursePage coursePage = cataloguePage.openURLInNewTab(courseUrl);
         Assertions.assertEquals(
                 2,
-                homePage.findCountOfVisibleEnrollButtons(),
+                coursePage.findCountOfVisibleEnrollButtons(),
                 "Неверное количество кнопок записи на курс!"
         );
     }
