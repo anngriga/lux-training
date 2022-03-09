@@ -1,5 +1,6 @@
 package com.luxoft.pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -24,6 +25,7 @@ public class LoginForm extends BasePage {
         PageFactory.initElements(driver, this);
     }
 
+    @Step("Проверить что все элементы формы отображаются")
     public boolean allInputsAreVisible() {
         return loginInput.isDisplayed() && passwordInput.isDisplayed() &&
                 logInButton.isDisplayed() && rememberMeCheckbox.isDisplayed();

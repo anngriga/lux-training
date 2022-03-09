@@ -1,5 +1,6 @@
 package com.luxoft.pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -21,6 +22,7 @@ public class CoursePage extends BasePage {
      * Найти количество видимых кнопок с текстом "Записаться на курс"
      * @return Количество отображаемых кнопок
      */
+    @Step("Найти количество видимых кнопок с текстом \"Записаться на курс\"")
     public int findCountOfVisibleEnrollButtons() {
 
         List<WebElement> buttons = driver.findElements(

@@ -4,6 +4,8 @@ import com.luxoft.pages.CataloguePage;
 import com.luxoft.pages.CoursePage;
 import com.luxoft.pages.HomePage;
 import com.luxoft.pages.LoginForm;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Story;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
@@ -17,6 +19,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Set;
 
+@Epic("Тестирование luxoft-training")
+@Story("Смок тестирование luxoft-training")
 public class LuxTrainingTest {
 
     static SetUp setUpObject;
@@ -44,6 +48,7 @@ public class LuxTrainingTest {
     }
 
     @Test
+    @DisplayName("Тест формы логина")
     void testLogIn() {
         HomePage homePage = makeHomePage();
         LoginForm loginForm = homePage.openLoginForm();
@@ -52,6 +57,7 @@ public class LuxTrainingTest {
 
     @ParameterizedTest
     @CsvFileSource(resources = "/links.csv", numLinesToSkip = 1, delimiter = '|')
+    @DisplayName("Тест набора ссылок главного меню")
     void testMainMenuLinks(String first, String second, String third) {
         HomePage homePage = makeHomePage();
         Set<String> expectedLinkTexts = Set.of(first, second, third);
@@ -64,6 +70,7 @@ public class LuxTrainingTest {
 
     @ParameterizedTest
     @CsvFileSource(resources = "/linktexts.csv", numLinesToSkip = 1, delimiter = '|')
+    @DisplayName("Тест изменения цвета ссылок при наведении")
     void testLinkColors(String url, String linkText) {
 
         setUpObject.getDriver().navigate().to(url);
@@ -85,6 +92,7 @@ public class LuxTrainingTest {
     }
 
     @Test
+    @DisplayName("Тест каталога курсов в формате PDF")
     void testCatalogue() {
         HomePage homePage = makeHomePage();
         CataloguePage cataloguePage = homePage.openCataloguePage();
@@ -98,6 +106,7 @@ public class LuxTrainingTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"SQA-050", "SQA-004"})
+    @DisplayName("Тест кнопок записи на курс")
     void testCatalogueEnrollLinks(String courseName) {
         HomePage homePage = makeHomePage();
         CataloguePage cataloguePage = homePage.openCataloguePage();

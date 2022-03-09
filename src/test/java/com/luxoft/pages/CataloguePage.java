@@ -1,5 +1,6 @@
 package com.luxoft.pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -27,6 +28,7 @@ public class CataloguePage extends BasePage {
      * @param name Имя курса для поиска
      * @return URL найденного курса
      */
+    @Step("Найти ссылку на курс по заданному имени курса: {name}")
     public String findCourseLink(String name) {
         searchInput.sendKeys(name);
         WebElement courseLink = wait.until(ExpectedConditions.visibilityOf(searchResults))
@@ -38,6 +40,7 @@ public class CataloguePage extends BasePage {
      * Открыть ссылку (на курс) в новой вкладке и перейти в эту вкладку.
      * @param url Адрес ссылки, которую нужно открыть
      */
+    @Step("Открыть ссылку на курс: {url}")
     public CoursePage openURLInNewTab(String url) {
         // window.open(url, '_blank').focus();
         String js = "window.open('" + url + "', '_blank').focus();";
@@ -50,6 +53,7 @@ public class CataloguePage extends BasePage {
      * Открыть PDF-файл каталога курсов. Откроется в новой вкладке,
      * которая будет неактивна в драйвере
      */
+    @Step("Открыть PDF-файл каталога курсов.")
     public void openCataloguePDF() {
         findLinkWithText("Скачать каталог").click();
         switchTab();
